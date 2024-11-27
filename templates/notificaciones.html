@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones</title>
+    <style>
+        
+        body {
+            font-family: 'Georgia', 'Nirmala UI', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            position: relative;
+        }
+
+        .tab-container {
+            background-color: #1e1e1e;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            color: #bb86fc;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .list-group {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .list-group-item {
+            background-color: #2e2e2e;
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .list-group-item:hover {
+            background-color: #444444;
+        }
+
+        /* Reducir intensidad del color para notificaciones leídas */
+        .list-group-item-success {
+            background-color: #74b06b;
+            color: #bbbbbb;
+        }
+
+        .list-group-item-success:hover {
+            background-color: #505050;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #bb86fc;
+            color: #ffffff;
+            border-radius: 3px;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: #9c4ccc;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-back svg {
+            margin-right: 5px;
+            transition: transform 0.3s;
+        }
+
+        .btn-back:hover svg {
+            transform: translateX(-5px);
+        }
+
+        .btn-primary {
+            background-color: #bb86fc;
+            border: none;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background-color: #9c4ccc;
+        }
+
+        /* Responsivo */
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 1.2em;
+            }
+
+            .list-group-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px;
+            }
+
+            .btn-primary {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="javascript:history.back()" class="btn-back">
+        <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+            <path d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z"></path>
+        </svg>
+        Back
+    </a>
+
+    <div class="container">
+        <div class="tab-container">
+            <h2>Notificaciones</h2>
+            <ul class="list-group">
+                {% for notificacion in notificaciones %}
+                <li class="list-group-item {{ 'list-group-item-success' if notificacion.leida else '' }}">
+                    <p>{{ notificacion.mensaje }}</p>
+                    <small><strong>{{ notificacion.fecha }}</strong></small>
+                    {% if notificacion.leida == 0 %}
+                    <form action="/marcar_como_leida/{{ notificacion.id_notificacion }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn-primary">Marcar como leído</button>
+                    </form>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

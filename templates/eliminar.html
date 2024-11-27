@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar Producto - Minimalista</title>
+    <style>
+        body {
+            font-family: 'Georgia', 'Nirmala UI', sans-serif;
+            background-color: #121212;
+            color: #bb86fc;
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            background: linear-gradient(135deg, #000000, #bb86fc);
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            width: 100%;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        nav:hover {
+            background: linear-gradient(135deg, #bb86fc, #000000);
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center; /* Asegura que los elementos estén centrados verticalmente */
+        }
+        nav ul li {
+            margin-right: 20px;
+        }
+        nav ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s;
+        }
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: #bb86fc;
+            transition: width 0.3s, left 0.3s;
+        }
+        nav ul li a:hover {
+            color: #000000;
+        }
+        nav ul li a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+        .container {
+            padding: 100px 20px 20px; /* Añadido espacio para el navbar fijo */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 80px); /* Espacio para el navbar */
+        }
+        .delete-product-container {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+        .product {
+            background-color: #1e1e1e;
+            border-radius: 5px;
+            padding: 5px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+        .delete-product-container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            color: #bb86fc; /* Color para enfatizar la acción de eliminar */
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #bbbbbb;
+        }
+        input, select {
+            background-color: #2e2e2e;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            border: 2px solid #bb86fc; /* Color en el borde cuando se selecciona el campo */
+        }
+        input[type="submit"] {
+            background-color: #ff4f4f;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #ff3030;
+        }
+        .delete-animation {
+            display: none;
+            margin-top: 20px;
+            animation: shake 0.5s linear;
+        }
+        .delete-animation.show {
+            display: block;
+        }
+        .success-message {
+            display: none;
+            background-color: #1e1e1e;
+            color: #00ff88;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 14px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .success-message.show {
+            display: block;
+        }
+        /* Animación de agitación */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        /* Estilo del botón de notificaciones */
+        .button {
+            width: 50px;
+            height: 50px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgb(44, 44, 44);
+            border-radius: 50%;
+            cursor: pointer;
+            transition-duration: .3s;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.13);
+            border: none;
+        }
+
+        .bell {
+            width: 24px; /* Incrementar tamaño del ícono */
+        }
+
+        .bell path {
+            fill: white;
+        }
+
+        .button:hover {
+            background-color: rgb(56, 56, 56);
+        }
+
+        .button:hover .bell {
+            animation: bellRing 0.9s both;
+        }
+
+        @keyframes bellRing {
+            0%, 100% { transform-origin: top; }
+            15% { transform: rotateZ(10deg); }
+            30% { transform: rotateZ(-10deg); }
+            45% { transform: rotateZ(5deg); }
+            60% { transform: rotateZ(-5deg); }
+            75% { transform: rotateZ(2deg); }
+        }
+
+        .button:active {
+            transform: scale(0.8);
+        }
+
+        /* Estilo para el contador de notificaciones no leídas */
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ff0000;
+            color: #ffffff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <ul class="left-menu">
+        <li><a href="/agregar">Agregar Productos</a></li>
+        <li><a href="/editar">Editar Productos</a></li>
+        <li><a href="/eliminar">Eliminar Productos</a></li>
+        <li><a href="/visualizar">Visualizar</a></li>
+    </ul>
+    <ul class="right-menu">
+        <li><a href="/settings">Perfil del Empleado</a></li>
+        <li><a href="/logout">Log Out</a></li>
+        <button class="button" onclick="window.location.href='/notificaciones'">
+            <svg viewBox="0 0 448 512" class="bell">
+                <path d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416H424c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 96h8c57.4 0 104 46.6 104 104v33.4c0 47.9 13.9 94.6 39.7 134.6H72.3C98.1 328 112 281.3 112 233.4V200c0-57.4 46.6-104 104-104h8zm64 352H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7s18.7-28.3 18.7-45.3z"></path>
+            </svg>
+            <!-- Contador de notificaciones no leídas -->
+            <div class="notification-count">{{ num_notificaciones_no_leidas }}</div>
+        </button>
+    </li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="delete-product-container">
+        <h1>Eliminar Producto</h1>
+        <form id="deleteProductForm" action="/eliminar_productos" method="POST">
+            <label for="searchProduct">Buscar Producto</label>
+            <input type="text" id="searchProduct" name="searchProduct" placeholder="ID del producto" required>
+
+            <!-- Campo para mostrar el nombre del producto -->
+            <div id="productNameDisplay" style="color: #bbbbbb; font-size: 14px; margin-bottom: 10px;"></div>
+
+            <label for="confirmDelete">Confirmar eliminación</label>
+            <select id="confirmDelete" name="confirmDelete" required>
+                <option value="">Selecciona...</option>
+                <option value="yes">Sí, eliminar</option>
+                <option value="no">No, cancelar</option>
+            </select>
+
+            <input type="submit" value="Eliminar Producto">
+        </form>
+
+        <div class="delete-animation" id="deleteAnimation">
+            ❌ El producto está siendo eliminado...
+        </div>
+
+        <div class="success-message" id="successMessage">
+            ¡Producto eliminado con éxito!
+        </div>
+    </div>
+</div>
+
+<script>
+    // Manejador de eventos para mostrar el nombre del producto al ingresar el ID
+    document.getElementById('searchProduct').addEventListener('input', function() {
+        const productId = this.value;
+        const productNameDisplay = document.getElementById('productNameDisplay');
+        
+        if (productId) {
+            // Llamada al servidor para obtener el nombre del producto
+            fetch(`/obtener_producto/${productId}`) // Inserta el valor de productId en la URL
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Asume que el servidor devuelve JSON con { "nombre": "Nombre del producto" }
+                    } else {
+                        throw new Error("Producto no encontrado");
+                    }
+                })
+                .then(data => {
+                    productNameDisplay.textContent = `Nombre del producto: ${data.nombre}`;
+                })
+                .catch(error => {
+                    productNameDisplay.textContent = "Producto no encontrado";
+                });
+        } else {
+            productNameDisplay.textContent = ""; // Limpia el campo si el ID está vacío
+        }
+    });
+    
+
+    document.getElementById('deleteProductForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const confirmDelete = document.getElementById('confirmDelete').value;
+        const deleteAnimation = document.getElementById('deleteAnimation');
+        const successMessage = document.getElementById('successMessage');
+        const searchProductId = document.getElementById('searchProduct').value;
+
+        if (confirmDelete === 'yes') {
+            deleteAnimation.classList.add('show');
+            
+            // Realiza la llamada a eliminar el producto usando fetch
+            fetch(`/eliminar_productos/${searchProductId}`, {
+                method: 'POST',
+            }).then(response => {
+                if (response.ok) {
+                    setTimeout(() => {
+                        deleteAnimation.classList.remove('show');
+                        successMessage.classList.add('show');
+
+                        setTimeout(() => {
+                            successMessage.classList.remove('show');
+                        }, 3000);
+                    }, 2000); // Simula un proceso de eliminación de 2 segundos
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+        } else {
+            alert('Eliminación cancelada.');
+        }
+        this.reset();
+        document.getElementById('productNameDisplay').textContent = ""; // Limpia el nombre del producto tras el envío
+    });
+</script>
+
+</body>
+</html>
